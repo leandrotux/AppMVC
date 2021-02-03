@@ -5,7 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace Dev.Data.Mappings
+namespace Dev.Datas.Mappings
 {
    public class ProdutoMapping : IEntityTypeConfiguration<Produto>
     {
