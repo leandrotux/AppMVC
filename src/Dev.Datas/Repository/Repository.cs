@@ -13,8 +13,14 @@ namespace Dev.Datas.Repository
 {
     public abstract class Repository<TEntity> : IRepository<TEntity> where TEntity : Entity, new()
     {
-        protected readonly DevDbContext db;
+        protected readonly DevDbContext Db;
         protected readonly DbSet<TEntity> dbSet;
+
+        protected Repository(DevDbContext db)
+        {
+            Db = db;
+            dbSet = db.Set<TEntity>();
+        }
 
         public async Task<IEnumerable<TEntity>> Search(Expression<Func<TEntity, bool>> predicate)
         {
