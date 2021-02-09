@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Text;
+using Dev.App.ViewModels;
 
 namespace Dev.App.Data
 {
@@ -12,5 +13,6 @@ namespace Dev.App.Data
             : base(options)
         {
         }
+        
     }
 }

@@ -60,12 +60,12 @@ namespace Dev.Datas.Repository
 
         public async Task<int> SaveChanges()
         {
-            return await db.SaveChangesAsync();
+            return await Db.SaveChangesAsync();
         }
         
         public async void Dispose()
         {
-            db?.Dispose();
+            Db?.Dispose();
         }
     }
 }
