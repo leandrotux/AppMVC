@@ -6,6 +6,8 @@ using Dev.App.ViewModels;
 using Dev.Business.Interfaces;
 using AutoMapper;
 using AppMvcBasica.Models;
+using Microsoft.AspNetCore.Http;
+using System.IO;
 
 namespace Dev.App.Controllers
 {
@@ -16,12 +18,14 @@ namespace Dev.App.Controllers
         private readonly IMapper _mapper;
 
         public ProdutosController(IProdutoRepository produtoRepository,
-            IMapper mapper,
-            IFornecedorRepository fornecedorRepository)
+            IFornecedorRepository fornecedorRepository,
+            IMapper mapper)
+            
         {
             _produtoRepository = produtoRepository;
-            _mapper = mapper;
             _fornecedorRepository = fornecedorRepository;
+            _mapper = mapper;
+            
         }
 
 
@@ -48,6 +52,7 @@ namespace Dev.App.Controllers
         public async Task<IActionResult> Create()
         {
             var produtoViewModel = await PopulateFornecedores(new ProdutoViewModel());
+
             return View(produtoViewModel);
         }
 
@@ -56,13 +61,22 @@ namespace Dev.App.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(ProdutoViewModel produtoViewModel)
         {
-            produtoViewModel = await PopulateFornecedores(new ProdutoViewModel());
+            produtoViewModel = await PopulateFornecedores(produtoViewModel);
 
             if (!ModelState.IsValid) return View(produtoViewModel);
 
+            var imgPrefixo = Guid.NewGuid() + "_";
+
+            if(!await UploadArquivo(produtoViewModel.ImagemUpload, imgPrefixo))
+            {
+                return View(produtoViewModel);
+            }
+
+            produtoViewModel.Imagem = imgPrefixo + produtoViewModel.ImagemUpload.FileName;
+
             await _produtoRepository.Add(_mapper.Map<Produto>(produtoViewModel));
             
-            return View(produtoViewModel);
+            return RedirectToAction("Index");
         }
 
 
@@ -131,6 +145,26 @@ namespace Dev.App.Controllers
             produto.Fornecedores = _mapper.Map<IEnumerable<FornecedorViewModel>>(await _fornecedorRepository.GetAll());
 
             return produto;
+        }
+
+        private async Task<bool> UploadArquivo(IFormFile arquivo, string imgPrefixo)
+        {
+            if (arquivo.Length <= 0) return false;
+
+            var path = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/imagens", imgPrefixo + arquivo.FileName);
+
+            if (System.IO.File.Exists(path))
+            {
+                ModelState.AddModelError(string.Empty, "Já existe um arquivo com este nome!");
+                return false;
+            }
+
+           using(var stream = new FileStream(path, FileMode.Create))
+            {
+                await arquivo.CopyToAsync(stream);
+            }
+
+            return true;
         }
     }
 }
