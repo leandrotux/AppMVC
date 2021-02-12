@@ -3,8 +3,6 @@ using Dev.Business.Interfaces;
 using Dev.Datas.Context;
 using Microsoft.EntityFrameworkCore;
 using System;
-using System.Collections.Generic;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace Dev.Datas.Repository

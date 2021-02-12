@@ -1,13 +1,10 @@
 ﻿using AppMvcBasica.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace Dev.Datas.Mappings
 {
-   public class ProdutoMapping : IEntityTypeConfiguration<Produto>
+    public class ProdutoMapping : IEntityTypeConfiguration<Produto>
     {
         public void Configure(EntityTypeBuilder<Produto> builder)
         {
