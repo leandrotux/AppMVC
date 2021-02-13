@@ -16,14 +16,14 @@ namespace Dev.Datas.Repository
 
         public async Task<Fornecedor> GetFornecedorEndereco(Guid id)
         {
-            return await Db.Fornecedores.AsNoTracking()
+            return await _Db.Fornecedores.AsNoTracking()
                 .Include(c => c.Endereco)
                 .FirstOrDefaultAsync(c => c.Id == id);
         }
 
         public async Task<Fornecedor> GetFornecedorProdutoEndereco(Guid id)
         {
-            return await Db.Fornecedores.AsNoTracking()
+            return await _Db.Fornecedores.AsNoTracking()
                 .Include(p => p.Produtos)
                 .Include(c => c.Endereco)
                 .FirstOrDefaultAsync(c => c.Id == id);

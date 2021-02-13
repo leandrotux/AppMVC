@@ -82,15 +82,16 @@ namespace Dev.App.Controllers
 
         public async Task<IActionResult> Edit(Guid id)
         {
-            var produto = await GetProduto(id);
+            var produtoViewModel = await GetProduto(id);
 
-            if (produto == null)
+            if (produtoViewModel == null)
             {
                 return NotFound();
             }
 
-            return View(produto);
+            return View(produtoViewModel);
         }
+    
 
 
         [HttpPost]
@@ -99,9 +100,29 @@ namespace Dev.App.Controllers
         {
             if (id != produtoViewModel.Id) return NotFound();
 
+            var produtoUpdate = await GetProduto(id);
+
+            produtoViewModel.Fornecedor = produtoUpdate.Fornecedor;
+            produtoViewModel.Imagem = produtoUpdate.Imagem;
             if (!ModelState.IsValid) return View(produtoViewModel);
 
-            await _produtoRepository.Update(_mapper.Map<Produto>(produtoViewModel));
+            if(produtoViewModel.ImagemUpload != null)
+            {
+                var imgPrefixo = Guid.NewGuid() + "_";
+                if (!await UploadArquivo(produtoViewModel.ImagemUpload, imgPrefixo))
+                {
+                    return View(produtoViewModel);
+                }
+
+                produtoUpdate.Imagem = imgPrefixo + produtoViewModel.ImagemUpload.FileName;
+            }
+
+            produtoUpdate.Nome = produtoViewModel.Nome;
+            produtoUpdate.Descricao = produtoViewModel.Descricao;
+            produtoUpdate.Valor = produtoViewModel.Valor;
+            produtoUpdate.Ativo = produtoViewModel.Ativo;
+
+            await _produtoRepository.Update(_mapper.Map<Produto>(produtoUpdate));
 
             return RedirectToAction("Index");
             

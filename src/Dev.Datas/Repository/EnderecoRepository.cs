@@ -16,7 +16,7 @@ namespace Dev.Datas.Repository
 
         public async Task<Endereco> GetEnderecoPorFornecedor(Guid fornecedorId)
         {
-            return await Db.Enderecos.AsNoTracking()
+            return await _Db.Enderecos.AsNoTracking()
                 .FirstOrDefaultAsync(f => f.FornecedorId == fornecedorId);
         }
     }

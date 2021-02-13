@@ -12,13 +12,13 @@ namespace Dev.Datas.Repository
 {
     public abstract class Repository<TEntity> : IRepository<TEntity> where TEntity : Entity, new()
     {
-        protected readonly DevDbContext Db;
+        protected readonly DevDbContext _Db;
         protected readonly DbSet<TEntity> dbSet;
 
-        protected Repository(DevDbContext db)
+        protected Repository(DevDbContext Db)
         {
-            Db = db;
-            dbSet = db.Set<TEntity>();
+            _Db = Db;
+            dbSet = _Db.Set<TEntity>();
         }
 
         public async Task<IEnumerable<TEntity>> Search(Expression<Func<TEntity, bool>> predicate)
@@ -59,12 +59,12 @@ namespace Dev.Datas.Repository
 
         public async Task<int> SaveChanges()
         {
-            return await Db.SaveChangesAsync();
+            return await _Db.SaveChangesAsync();
         }
         
         public async void Dispose()
         {
-            Db?.Dispose();
+            _Db?.Dispose();
         }
     }
 }

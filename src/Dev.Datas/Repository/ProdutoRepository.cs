@@ -18,14 +18,14 @@ namespace Dev.Datas.Repository
 
         public async Task<Produto> GetProdutoFornecedor(Guid id)
         {
-            return await Db.Produtos.AsNoTracking()
+            return await _Db.Produtos.AsNoTracking()
                 .Include(f => f.Fornecedor)
                 .FirstOrDefaultAsync(p => p.Id == id);
         }
 
         public async Task<IEnumerable<Produto>> GetProdutosFornecedores()
         {
-            return await Db.Produtos.AsNoTracking()
+            return await _Db.Produtos.AsNoTracking()
                .Include(f => f.Fornecedor)
                .OrderBy(p => p.Nome)
                .ToListAsync();
