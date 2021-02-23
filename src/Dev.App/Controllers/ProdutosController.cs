@@ -28,14 +28,14 @@ namespace Dev.App.Controllers
             
         }
 
-
+        [Route("lista-de-produtos")]
         public async Task<IActionResult> Index()
         {
             var produto = _mapper.Map<IEnumerable<ProdutoViewModel>>(await _produtoRepository.GetProdutosFornecedores());
             return View(produto);
         }
 
-
+        [Route("dados-do-produtos/{id:guid}")]
         public async Task<IActionResult> Details(Guid id)
         {
 
@@ -48,7 +48,7 @@ namespace Dev.App.Controllers
             return View(produtoViewModel);
         }
 
-
+        [Route("novo-produto")]
         public async Task<IActionResult> Create()
         {
             var produtoViewModel = await PopulateFornecedores(new ProdutoViewModel());
@@ -56,7 +56,7 @@ namespace Dev.App.Controllers
             return View(produtoViewModel);
         }
 
-
+        [Route("novo-produto")]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(ProdutoViewModel produtoViewModel)
@@ -79,7 +79,7 @@ namespace Dev.App.Controllers
             return RedirectToAction("Index");
         }
 
-
+        [Route("editar-produto/{id:guid}")]
         public async Task<IActionResult> Edit(Guid id)
         {
             var produtoViewModel = await GetProduto(id);
@@ -91,9 +91,9 @@ namespace Dev.App.Controllers
 
             return View(produtoViewModel);
         }
-    
 
 
+        [Route("editar-produto/{id:guid}")]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(Guid id, ProdutoViewModel produtoViewModel)
@@ -128,7 +128,7 @@ namespace Dev.App.Controllers
             
         }
 
-
+        [Route("excluir-produto/{id:guid}")]
         public async Task<IActionResult> Delete(Guid id)
         {
             var produto = await GetProduto(id);
@@ -138,7 +138,7 @@ namespace Dev.App.Controllers
             return View(produto);
         }
 
-
+        [Route("excluir-produto/{id:guid}")]
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(Guid id)
@@ -152,6 +152,7 @@ namespace Dev.App.Controllers
             return RedirectToAction("Index");
         }
 
+        
         private async Task<ProdutoViewModel> GetProduto(Guid id)
         {
             var produto = _mapper.Map<ProdutoViewModel>(await _produtoRepository.GetProdutoFornecedor(id));
