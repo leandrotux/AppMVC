@@ -8,9 +8,9 @@ namespace Dev.Business.Services.Interfaces
 {
     public interface IProdutoService
     {
-        Task Add(Fornecedor fornecedor);
+        Task Add(Produto produto);
 
-        Task Update(Fornecedor fornecedor);
+        Task Update(Produto produto);
 
         Task Remove(Guid id);
     }

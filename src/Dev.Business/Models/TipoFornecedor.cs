@@ -7,7 +7,7 @@ namespace AppMvcBasica.Models
 {
     public enum TipoFornecedor
     {
-        Física = 1,
-         Júrdica = 2
+        PessoaFisica = 1,
+         PessoaJuridica = 2
     }
 }
