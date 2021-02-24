@@ -4,7 +4,7 @@ using System.Threading.Tasks;
 
 namespace Dev.Business.Services.Interfaces
 {
-    public interface IFornecedorService
+    public interface IFornecedorService : IDisposable
     {
         Task Add(Fornecedor fornecedor);
 
