@@ -1,31 +1,33 @@
 ﻿using AppMvcBasica.Models;
 using Dev.Business.Interfaces;
 using Dev.Business.Models.Validations;
+using Dev.Business.Notifications.Interfaces;
 using Dev.Business.Services.Interfaces;
 using System;
 using System.Threading.Tasks;
 
 namespace Dev.Business.Services
 {
-    public class ProdutoService : BaseService, IProdutoService
+    public class ProdutoService : IBaseService, IProdutoService
     {
         private readonly IProdutoRepository _produtoRepository;
 
-        public ProdutoService(IProdutoRepository produtoRepository)
+        public ProdutoService(IProdutoRepository produtoRepository,
+                              INotificator notificator) : base(notificator)
         {
             _produtoRepository = produtoRepository;
         }
 
         public async Task Add(Produto produto)
         {
-            if (!ExecutarValidacao(new ProdutoValidation(), produto)) return;
+            if (!ExecuteValidation(new ProdutoValidation(), produto)) return;
 
             await _produtoRepository.Add(produto);
         }
 
         public async Task Update(Produto produto)
         {
-            if (!ExecutarValidacao(new ProdutoValidation(), produto)) return;
+            if (!ExecuteValidation(new ProdutoValidation(), produto)) return;
 
             await _produtoRepository.Update(produto);
 

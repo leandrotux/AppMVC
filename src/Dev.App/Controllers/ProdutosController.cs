@@ -8,6 +8,7 @@ using AutoMapper;
 using AppMvcBasica.Models;
 using Microsoft.AspNetCore.Http;
 using System.IO;
+using Dev.Business.Services.Interfaces;
 
 namespace Dev.App.Controllers
 {
@@ -16,16 +17,20 @@ namespace Dev.App.Controllers
         private readonly IProdutoRepository _produtoRepository;
         private readonly IFornecedorRepository _fornecedorRepository;
         private readonly IMapper _mapper;
+        private readonly IProdutoService _produtoService;
 
         public ProdutosController(IProdutoRepository produtoRepository,
-            IFornecedorRepository fornecedorRepository,
-            IMapper mapper)
+                                  IFornecedorRepository fornecedorRepository,
+                                  IMapper mapper,
+                                  IProdutoService produtoService)
             
         {
             _produtoRepository = produtoRepository;
             _fornecedorRepository = fornecedorRepository;
             _mapper = mapper;
-            
+            _produtoService = produtoService
+
+
         }
 
         [Route("lista-de-produtos")]
@@ -74,7 +79,7 @@ namespace Dev.App.Controllers
 
             produtoViewModel.Imagem = imgPrefixo + produtoViewModel.ImagemUpload.FileName;
 
-            await _produtoRepository.Add(_mapper.Map<Produto>(produtoViewModel));
+            await _produtoService.Add(_mapper.Map<Produto>(produtoViewModel));
             
             return RedirectToAction("Index");
         }
@@ -122,7 +127,7 @@ namespace Dev.App.Controllers
             produtoUpdate.Valor = produtoViewModel.Valor;
             produtoUpdate.Ativo = produtoViewModel.Ativo;
 
-            await _produtoRepository.Update(_mapper.Map<Produto>(produtoUpdate));
+            await _produtoService.Update(_mapper.Map<Produto>(produtoUpdate));
 
             return RedirectToAction("Index");
             
@@ -147,7 +152,7 @@ namespace Dev.App.Controllers
 
             if (produto == null) return NotFound();
 
-            await _produtoRepository.Delete(id);
+            await _produtoService.Remove(id);
 
             return RedirectToAction("Index");
         }

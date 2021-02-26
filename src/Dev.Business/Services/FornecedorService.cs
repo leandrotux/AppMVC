@@ -1,6 +1,7 @@
 ﻿using AppMvcBasica.Models;
 using Dev.Business.Interfaces;
 using Dev.Business.Models.Validations;
+using Dev.Business.Notifications.Interfaces;
 using Dev.Business.Services.Interfaces;
 using System;
 using System.Linq;
@@ -8,13 +9,14 @@ using System.Threading.Tasks;
 
 namespace Dev.Business.Services
 {
-    public class FornecedorService : BaseService, IFornecedorService
+    public class FornecedorService : IBaseService, IFornecedorService
     {
         private readonly IFornecedorRepository _fornecedorRepository;
         private readonly IEnderecoRepository _enderecoRepository;
 
         public FornecedorService(IFornecedorRepository fornecedorRepository,
-                                 IEnderecoRepository enderecoRepository)
+                                 IEnderecoRepository enderecoRepository,
+                                 INotificator notificator) : base(notificator)
         {
             _fornecedorRepository = fornecedorRepository;
             _enderecoRepository = enderecoRepository;
@@ -23,12 +25,12 @@ namespace Dev.Business.Services
         public async Task Add(Fornecedor fornecedor)
         {
 
-            if (!ExecutarValidacao(new FornecedorValidation(), fornecedor)
-                && !ExecutarValidacao(new EnderecoValidation(), fornecedor.Endereco)) return;
+            if (!ExecuteValidation(new FornecedorValidation(), fornecedor)
+                && !ExecuteValidation(new EnderecoValidation(), fornecedor.Endereco)) return;
 
             if(_fornecedorRepository.Search(f => f.Documento == fornecedor.Documento).Result.Any())
             {
-                Notificar("Já existe um fornecedor com esse documento informado.");
+                Notify("Já existe um fornecedor com esse documento informado.");
                 return;
             }
 
@@ -37,11 +39,11 @@ namespace Dev.Business.Services
 
         public async Task Update(Fornecedor fornecedor)
         {
-            if (!ExecutarValidacao(new FornecedorValidation(), fornecedor)) return;
+            if (!ExecuteValidation(new FornecedorValidation(), fornecedor)) return;
 
             if (_fornecedorRepository.Search(f => f.Documento == fornecedor.Documento && f.Id != fornecedor.Id).Result.Any())
             {
-                Notificar("Já existe um fornecedor com esse documento informado.");
+                Notify("Já existe um fornecedor com esse documento informado.");
                 return;
             }
 
@@ -51,7 +53,7 @@ namespace Dev.Business.Services
 
         public async Task UpdateAddress(Endereco endereco)
         {
-            if (!ExecutarValidacao(new EnderecoValidation(), endereco)) return;
+            if (!ExecuteValidation(new EnderecoValidation(), endereco)) return;
 
             await _enderecoRepository.Update(endereco);
         }
@@ -60,7 +62,7 @@ namespace Dev.Business.Services
         {
             if (_fornecedorRepository.GetFornecedorProdutoEndereco(id).Result.Produtos.Any())
             {
-                Notificar("O fornecedor possui produtos cadastrados!");
+                Notify("O fornecedor possui produtos cadastrados!");
                 return;
             }
             await _fornecedorRepository.Delete(id);

@@ -1,4 +1,6 @@
 ﻿using AppMvcBasica.Models;
+using Dev.Business.Notifications;
+using Dev.Business.Notifications.Interfaces;
 using FluentValidation;
 using FluentValidation.Results;
 using System;
@@ -8,27 +10,33 @@ using System.Text;
 
 namespace Dev.Business.Services
 {
-    public abstract class BaseService
+    public abstract class IBaseService
     {
-        protected void Notificar(ValidationResult validationResult)
+        private readonly INotificator _notificator;
+
+        public IBaseService(INotificator notificator)
+        {
+            _notificator = notificator;
+        }
+        protected void Notify(ValidationResult validationResult)
         {
             foreach (var erro in validationResult.Errors)
             {
-                Notificar(erro.ErrorMessage);
+                Notify(erro.ErrorMessage);
             } 
         }
-        protected void Notificar(string mensagem)
+        protected void Notify(string mensage)
         {
-
+            _notificator.Handle(new Notification(mensage));
         }
 
-        protected bool ExecutarValidacao<TV, TE>(TV validacao, TE entidade) where TV : AbstractValidator<TE> where TE : Entity
+        protected bool ExecuteValidation<TV, TE>(TV validate, TE entity) where TV : AbstractValidator<TE> where TE : Entity
         {
-            var validator = validacao.Validate(entidade);
+            var validator = validate.Validate(entity);
 
             if (validator.IsValid) return true;
 
-            Notificar(validator);
+            Notify(validator);
 
             return false;
         }
