@@ -22,7 +22,7 @@ namespace Dev.App.Configurations
                 o.ModelBindingMessageProvider.SetValueMustNotBeNullAccessor(x => "Este campo precisa ser preenchido.");
 
             })
-            .SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
+            .SetCompatibilityVersion(CompatibilityVersion.Version_3_0);
 
             return services;
         }

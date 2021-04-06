@@ -5,10 +5,11 @@ using Microsoft.AspNetCore.Mvc;
 using Dev.App.ViewModels;
 using Dev.Business.Interfaces;
 using AutoMapper;
-using AppMvcBasica.Models;
+using Dev.Business.Models;
 using Microsoft.AspNetCore.Http;
 using System.IO;
 using Dev.Business.Services.Interfaces;
+using Dev.Business.Notifications.Interfaces;
 
 namespace Dev.App.Controllers
 {
@@ -22,13 +23,14 @@ namespace Dev.App.Controllers
         public ProdutosController(IProdutoRepository produtoRepository,
                                   IFornecedorRepository fornecedorRepository,
                                   IMapper mapper,
-                                  IProdutoService produtoService)
+                                  IProdutoService produtoService,
+                                  INotificator notificator) : base(notificator)
             
         {
             _produtoRepository = produtoRepository;
             _fornecedorRepository = fornecedorRepository;
             _mapper = mapper;
-            _produtoService = produtoService
+            _produtoService = produtoService;
 
 
         }
@@ -80,6 +82,8 @@ namespace Dev.App.Controllers
             produtoViewModel.Imagem = imgPrefixo + produtoViewModel.ImagemUpload.FileName;
 
             await _produtoService.Add(_mapper.Map<Produto>(produtoViewModel));
+
+            if (!ValidOperation()) return View(produtoViewModel);
             
             return RedirectToAction("Index");
         }
@@ -129,6 +133,8 @@ namespace Dev.App.Controllers
 
             await _produtoService.Update(_mapper.Map<Produto>(produtoUpdate));
 
+            if (!ValidOperation()) return View(produtoViewModel);
+
             return RedirectToAction("Index");
             
         }
@@ -153,6 +159,10 @@ namespace Dev.App.Controllers
             if (produto == null) return NotFound();
 
             await _produtoService.Remove(id);
+
+            if (!ValidOperation()) return View(produto);
+
+            TempData["Sucesso"] = "Produto excluido com sucesso!";
 
             return RedirectToAction("Index");
         }

@@ -1,4 +1,4 @@
-﻿using AppMvcBasica.Models;
+﻿using Dev.Business.Models;
 using Dev.Business.Interfaces;
 using Dev.Datas.Context;
 using Microsoft.EntityFrameworkCore;

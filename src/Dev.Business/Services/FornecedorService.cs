@@ -1,4 +1,4 @@
-﻿using AppMvcBasica.Models;
+﻿using Dev.Business.Models;
 using Dev.Business.Interfaces;
 using Dev.Business.Models.Validations;
 using Dev.Business.Notifications.Interfaces;
@@ -26,7 +26,7 @@ namespace Dev.Business.Services
         {
 
             if (!ExecuteValidation(new FornecedorValidation(), fornecedor)
-                && !ExecuteValidation(new EnderecoValidation(), fornecedor.Endereco)) return;
+                || !ExecuteValidation(new EnderecoValidation(), fornecedor.Endereco)) return;
 
             if(_fornecedorRepository.Search(f => f.Documento == fornecedor.Documento).Result.Any())
             {

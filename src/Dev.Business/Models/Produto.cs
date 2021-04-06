@@ -1,7 +1,6 @@
-﻿
-using System;
+﻿using System;
 
-namespace AppMvcBasica.Models
+namespace Dev.Business.Models
 {
     public class Produto : Entity
     {

@@ -5,8 +5,9 @@ using Microsoft.AspNetCore.Mvc;
 using Dev.App.ViewModels;
 using Dev.Business.Interfaces;
 using AutoMapper;
-using AppMvcBasica.Models;
+using Dev.Business.Models;
 using Dev.Business.Services.Interfaces;
+using Dev.Business.Notifications.Interfaces;
 
 namespace Dev.App.Controllers
 {
@@ -18,8 +19,8 @@ namespace Dev.App.Controllers
 
         public FornecedoresController(IFornecedorRepository fornecedorRepository,
                                       IMapper mapper,
-                                      IFornecedorService fornecedorService
-                                      )
+                                      IFornecedorService fornecedorService,
+                                      INotificator notificator) : base(notificator)
         {
             _fornecedorRepository = fornecedorRepository;
             _mapper = mapper;
@@ -61,6 +62,8 @@ namespace Dev.App.Controllers
             var fornecedor = _mapper.Map<Fornecedor>(fornecedorViewModel);
             await _fornecedorService.Add(fornecedor);
 
+            if (!ValidOperation()) return View(fornecedorViewModel);
+
             return RedirectToAction("Index");
 
 
@@ -90,7 +93,8 @@ namespace Dev.App.Controllers
 
             var fornecedor = _mapper.Map<Fornecedor>(fornecedorViewModel);
             await _fornecedorService.Update(fornecedor);
-                
+
+            if (!ValidOperation()) return View(await GetFornecedorEndereco(id));
             return RedirectToAction("Index");
 
         }
@@ -113,11 +117,15 @@ namespace Dev.App.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(Guid id)
         {
-            var fornecedorViewModel = await GetFornecedorEndereco(id);
+            var fornecedor = await GetFornecedorEndereco(id);
 
-            if (fornecedorViewModel == null) return NotFound();
+            if (fornecedor == null) return NotFound();
 
             await _fornecedorService.Remove(id);
+
+            if (!ValidOperation()) return View(fornecedor);
+
+            TempData["Sucesso"] = "fornecedor excluido com sucesso!";
 
             return RedirectToAction("Index");
         }
@@ -158,6 +166,8 @@ namespace Dev.App.Controllers
             if (!ModelState.IsValid) return PartialView("_AtualizarEndereco", fornecedorViewModel);
 
             await _fornecedorService.UpdateAddress(_mapper.Map<Endereco>(fornecedorViewModel.Endereco));
+
+            if (!ValidOperation()) return PartialView("_AtualizarEndereco", fornecedorViewModel);
 
 
             var url = Url.Action("GetEndereco", "Fornecedores", new { id = fornecedorViewModel.Endereco.FornecedorId });

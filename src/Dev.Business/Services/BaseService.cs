@@ -1,4 +1,4 @@
-﻿using AppMvcBasica.Models;
+﻿using Dev.Business.Models;
 using Dev.Business.Notifications;
 using Dev.Business.Notifications.Interfaces;
 using FluentValidation;
